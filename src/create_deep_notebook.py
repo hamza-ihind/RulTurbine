@@ -23,7 +23,7 @@ def create_deep_notebook():
                     "3. **Sliding Window Sequence Creation**: Build windows of size 30. Each sample has shape `(30, 14)`.\n",
                     "4. **PyTorch Dataset & DataLoader**: Pack windows into DataLoader batches.\n",
                     "5. **LSTM Network**: Build a 2-layer LSTM with hidden size 64 and Dropout (0.2), followed by a regression layer.\n",
-                    "6. **Training**: Train for 15 epochs, tracking both train and validation MSE losses.\n",
+                    "6. **Training**: Train for 35 epochs, tracking both train and validation MSE losses.\n",
                     "7. **Evaluation**: Evaluate on the test dataset (final window of each of the 100 engines) using RMSE and the PHM08 asymmetric score."
                 ]
             },
@@ -44,6 +44,7 @@ def create_deep_notebook():
                     "from torch.utils.data import Dataset, DataLoader\n",
                     "from sklearn.preprocessing import MinMaxScaler\n",
                     "from sklearn.metrics import mean_squared_error\n",
+                    "import matplotlib.font_manager as fm\n",
                     "\n",
                     "# Append src directory to path\n",
                     "sys.path.append(os.path.abspath('../src'))\n",
@@ -53,12 +54,27 @@ def create_deep_notebook():
                     "torch.manual_seed(42)\n",
                     "np.random.seed(42)\n",
                     "\n",
-                    "# Configure plotting styles\n",
-                    "plt.rcParams['font.family'] = 'serif'\n",
-                    "plt.rcParams['font.size'] = 10\n",
+                    "# Register Alegreya font from the fonts folder\n",
+                    "font_path = '../fonts/Alegreya-Regular.ttf'\n",
+                    "if os.path.exists(font_path):\n",
+                    "    fm.fontManager.addfont(font_path)\n",
+                    "    plt.rcParams['font.family'] = 'Alegreya'\n",
+                    "    print(\"Alegreya font registered successfully.\")\n",
+                    "else:\n",
+                    "    font_path_alt = 'fonts/Alegreya-Regular.ttf'\n",
+                    "    if os.path.exists(font_path_alt):\n",
+                    "        fm.fontManager.addfont(font_path_alt)\n",
+                    "        plt.rcParams['font.family'] = 'Alegreya'\n",
+                    "        print(\"Alegreya font registered successfully (alt path).\")\n",
+                    "\n",
+                    "plt.rcParams['font.size'] = 11\n",
                     "plt.rcParams['axes.grid'] = True\n",
-                    "plt.rcParams['grid.alpha'] = 0.3\n",
+                    "plt.rcParams['grid.alpha'] = 0.25\n",
                     "plt.rcParams['grid.linestyle'] = '--'\n",
+                    "\n",
+                    "# Brand color palette: 070F2B 1B1A55 535C91 9290C3 2C5EAD 1591DC 4BB8FA C4E2F5\n",
+                    "brand_palette = ['#070F2B', '#1B1A55', '#535C91', '#9290C3', '#2C5EAD', '#1591DC', '#4BB8FA', '#C4E2F5']\n",
+                    "sns.set_palette(sns.color_palette(brand_palette))\n",
                     "\n",
                     "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\n",
                     "print(f\"Using device: {device}\")"
@@ -192,7 +208,7 @@ def create_deep_notebook():
                 "source": [
                     "## 3. Training Loop\n",
                     "\n",
-                    "We train the LSTM model for 15 epochs, using MSE Loss and the Adam optimizer. We track validation loss at the end of each epoch."
+                    "We train the LSTM model for 35 epochs, using MSE Loss and the Adam optimizer. We track validation loss at the end of each epoch."
                 ]
             },
             {
@@ -248,7 +264,7 @@ def create_deep_notebook():
                 "source": [
                     "## 4. Plot Loss Curves\n",
                     "\n",
-                    "Let's visualize the convergence and verify that the model did not overfit during training."
+                    "Let's visualize the convergence using our brand colors: Train Loss (`#2C5EAD`), Validation Loss (`#1B1A55`)."
                 ]
             },
             {
@@ -258,11 +274,11 @@ def create_deep_notebook():
                 "outputs": [],
                 "source": [
                     "plt.figure(figsize=(8, 4.5), dpi=300)\n",
-                    "plt.plot(range(1, epochs + 1), history['train_loss'], label='Train Loss (MSE)', color='#1f77b4', linewidth=2)\n",
-                    "plt.plot(range(1, epochs + 1), history['val_loss'], label='Validation Loss (MSE)', color='#ff7f0e', linewidth=2)\n",
+                    "plt.plot(range(1, epochs + 1), history['train_loss'], label='Train Loss (MSE)', color='#2C5EAD', linewidth=2)\n",
+                    "plt.plot(range(1, epochs + 1), history['val_loss'], label='Validation Loss (MSE)', color='#1B1A55', linewidth=2)\n",
                     "plt.xlabel('Epochs')\n",
                     "plt.ylabel('Mean Squared Error')\n",
-                    "plt.title('LSTM Model Training and Validation Loss Curves', fontsize=12, fontweight='bold')\n",
+                    "plt.title('LSTM Model Training and Validation Loss Curves', fontsize=12, fontweight='bold', pad=15, color='#070F2B')\n",
                     "plt.legend(frameon=True, facecolor='white')\n",
                     "plt.tight_layout()\n",
                     "os.makedirs('../figures', exist_ok=True)\n",
@@ -303,7 +319,11 @@ def create_deep_notebook():
                     "# Save predictions for final comparison notebook\n",
                     "os.makedirs('../data/processed', exist_ok=True)\n",
                     "np.save('../data/processed/lstm_predictions.npy', predictions)\n",
-                    "print(\"Predictions saved for comparison notebook.\")"
+                    "print(\"Predictions saved for comparison notebook.\")\n",
+                    "\n",
+                    "os.makedirs('../models', exist_ok=True)\n",
+                    "torch.save(model.state_dict(), '../models/lstm_model.pt')\n",
+                    "print(\"Model weights saved successfully.\")"
                 ]
             },
             {
@@ -312,7 +332,7 @@ def create_deep_notebook():
                 "source": [
                     "## 6. Sample Engine Predictions Plot\n",
                     "\n",
-                    "Let's see a scatter plot comparing the Predicted RUL vs True RUL for all 100 test engines to get a visual sense of performance."
+                    "Let's see a scatter plot comparing the Predicted RUL vs True RUL for all 100 test engines, styled in slate blue (`#535C91`) with a dark border."
                 ]
             },
             {
@@ -322,11 +342,11 @@ def create_deep_notebook():
                 "outputs": [],
                 "source": [
                     "plt.figure(figsize=(7.5, 5), dpi=300)\n",
-                    "plt.scatter(y_test, predictions, color='#2ca02c', alpha=0.7, edgecolors='black', linewidth=0.5, label='LSTM Predictions')\n",
-                    "plt.plot([0, 140], [0, 140], color='red', linestyle='--', linewidth=1.5, label='Perfect Prediction (y = x)')\n",
+                    "plt.scatter(y_test, predictions, color='#535C91', alpha=0.8, edgecolors='#070F2B', linewidth=0.5, label='LSTM Predictions')\n",
+                    "plt.plot([0, 140], [0, 140], color='#1591DC', linestyle='--', linewidth=1.5, label='Perfect Prediction (y = x)')\n",
                     "plt.xlabel('True RUL (Cycles)')\n",
                     "plt.ylabel('Predicted RUL (Cycles)')\n",
-                    "plt.title('LSTM Predictions vs True RUL (Test Set)', fontsize=12, fontweight='bold')\n",
+                    "plt.title('LSTM Predictions vs True RUL (Test Set)', fontsize=12, fontweight='bold', pad=15, color='#070F2B')\n",
                     "plt.legend(frameon=True, facecolor='white')\n",
                     "plt.tight_layout()\n",
                     "plt.savefig('../figures/lstm_predictions_scatter.png')\n",
@@ -340,7 +360,7 @@ def create_deep_notebook():
                 "metadata": {},
                 "source": [
                     "### Observations\n",
-                    "- The deep LSTM model achieves a **Test RMSE of ~12.5-13.0 cycles**, outperforming the classical baselines.\n",
+                    "- The deep LSTM model achieves a strong Test RMSE, outperforming the classical baselines.\n",
                     "- The predictions are clustered closely around the diagonal line, showing strong performance across both short and long RUL regimes.\n",
                     "\n",
                     "In the final notebook (**04_results_comparison.ipynb**), we will aggregate results from all baseline and deep models, perform error analysis on specific engines, and benchmark our scores against published C-MAPSS literature results."
