@@ -73,7 +73,7 @@ def create_deep_notebook():
                     "plt.rcParams['grid.linestyle'] = '--'\n",
                     "\n",
                     "# Brand color palette: 070F2B 1B1A55 535C91 9290C3 2C5EAD 1591DC 4BB8FA C4E2F5\n",
-                    "brand_palette = ['#070F2B', '#1B1A55', '#535C91', '#9290C3', '#2C5EAD', '#1591DC', '#4BB8FA', '#C4E2F5']\n",
+                    "brand_palette = ['#1B2A5E', '#2E2C7C', '#6B78B0', '#AFAED7', '#4A7CDE', '#3CA4F0', '#70C9FF', '#DCEFFA']\n",
                     "sns.set_palette(sns.color_palette(brand_palette))\n",
                     "\n",
                     "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\n",
@@ -264,7 +264,7 @@ def create_deep_notebook():
                 "source": [
                     "## 4. Plot Loss Curves\n",
                     "\n",
-                    "Let's visualize the convergence using our brand colors: Train Loss (`#2C5EAD`), Validation Loss (`#1B1A55`)."
+                    "Let's visualize the convergence using our brand colors: Train Loss (`#4A7CDE`), Validation Loss (`#2E2C7C`)."
                 ]
             },
             {
@@ -274,11 +274,11 @@ def create_deep_notebook():
                 "outputs": [],
                 "source": [
                     "plt.figure(figsize=(8, 4.5), dpi=300)\n",
-                    "plt.plot(range(1, epochs + 1), history['train_loss'], label='Train Loss (MSE)', color='#2C5EAD', linewidth=2)\n",
-                    "plt.plot(range(1, epochs + 1), history['val_loss'], label='Validation Loss (MSE)', color='#1B1A55', linewidth=2)\n",
+                    "plt.plot(range(1, epochs + 1), history['train_loss'], label='Train Loss (MSE)', color='#4A7CDE', linewidth=2)\n",
+                    "plt.plot(range(1, epochs + 1), history['val_loss'], label='Validation Loss (MSE)', color='#2E2C7C', linewidth=2)\n",
                     "plt.xlabel('Epochs')\n",
                     "plt.ylabel('Mean Squared Error')\n",
-                    "plt.title('LSTM Model Training and Validation Loss Curves', fontsize=12, fontweight='bold', pad=15, color='#070F2B')\n",
+                    "plt.title('LSTM Model Training and Validation Loss Curves', fontsize=12, fontweight='bold', pad=15, color='#1B2A5E')\n",
                     "plt.legend(frameon=True, facecolor='white')\n",
                     "plt.tight_layout()\n",
                     "os.makedirs('../figures', exist_ok=True)\n",
@@ -332,7 +332,7 @@ def create_deep_notebook():
                 "source": [
                     "## 6. Sample Engine Predictions Plot\n",
                     "\n",
-                    "Let's see a scatter plot comparing the Predicted RUL vs True RUL for all 100 test engines, styled in slate blue (`#535C91`) with a dark border."
+                    "Let's see a scatter plot comparing the Predicted RUL vs True RUL for all 100 test engines, styled in slate blue (`#6B78B0`) with a dark border."
                 ]
             },
             {
@@ -342,11 +342,11 @@ def create_deep_notebook():
                 "outputs": [],
                 "source": [
                     "plt.figure(figsize=(7.5, 5), dpi=300)\n",
-                    "plt.scatter(y_test, predictions, color='#535C91', alpha=0.8, edgecolors='#070F2B', linewidth=0.5, label='LSTM Predictions')\n",
-                    "plt.plot([0, 140], [0, 140], color='#1591DC', linestyle='--', linewidth=1.5, label='Perfect Prediction (y = x)')\n",
+                    "plt.scatter(y_test, predictions, color='#6B78B0', alpha=0.8, edgecolors='#1B2A5E', linewidth=0.5, label='LSTM Predictions')\n",
+                    "plt.plot([0, 140], [0, 140], color='#3CA4F0', linestyle='--', linewidth=1.5, label='Perfect Prediction (y = x)')\n",
                     "plt.xlabel('True RUL (Cycles)')\n",
                     "plt.ylabel('Predicted RUL (Cycles)')\n",
-                    "plt.title('LSTM Predictions vs True RUL (Test Set)', fontsize=12, fontweight='bold', pad=15, color='#070F2B')\n",
+                    "plt.title('LSTM Predictions vs True RUL (Test Set)', fontsize=12, fontweight='bold', pad=15, color='#1B2A5E')\n",
                     "plt.legend(frameon=True, facecolor='white')\n",
                     "plt.tight_layout()\n",
                     "plt.savefig('../figures/lstm_predictions_scatter.png')\n",
